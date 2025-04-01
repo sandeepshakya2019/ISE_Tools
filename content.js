@@ -3,26 +3,30 @@
   let currentVideo = "";
   let currentVideoBookmarks = [];
 
-
   const addNewBookmarkEventHandler = async () => {
     const currentTime = youtubePlayer.currentTime;
 
-// Get current date and format it as dd/mm/yyyy hh:mm:ss
-const now = new Date();
-const formattedDate = `${now.getDate().toString().padStart(2, "0")}/${
-  (now.getMonth() + 1).toString().padStart(2, "0")
-}/${now.getFullYear()} ${now.getHours().toString().padStart(2, "0")}:${
-  now.getMinutes().toString().padStart(2, "0")
-}:${now.getSeconds().toString().padStart(2, "0")}`;
+    // Get current date and format it as dd/mm/yyyy hh:mm:ss
+    const now = new Date();
+    const formattedDate = `${now.getDate().toString().padStart(2, "0")}/${(
+      now.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}/${now.getFullYear()} ${now
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now
+      .getSeconds()
+      .toString()
+      .padStart(2, "0")}`;
 
-const newBookmark = {
-  time: currentTime,
-  desc: "Bookmark at " + getTime(currentTime),
-  addedAt: "Added at " + formattedDate, // Store formatted date and time
-};
+    const newBookmark = {
+      time: currentTime,
+      desc: "Bookmark at " + getTime(currentTime),
+      addedAt: "Added at " + formattedDate, // Store formatted date and time
+    };
 
-
-    console.log(newBookmark)
+    console.log(newBookmark);
 
     // currentVideoBookmarks = await fetchBookmarks();
 
@@ -32,7 +36,8 @@ const newBookmark = {
   };
 
   const newVideoLoaded = async () => {
-    const bookmarkBtnExists = document.getElementsByClassName("bookmark-btn")[0];
+    const bookmarkBtnExists =
+      document.getElementsByClassName("bookmark-btn")[0];
 
     // currentVideoBookmarks = await fetchBookmarks();
 
@@ -43,11 +48,12 @@ const newBookmark = {
       bookmarkBtn.className = "ytp-button " + "bookmark-btn";
       bookmarkBtn.title = "Click to bookmark current timestamp";
 
-      bookmarkBtn.style.width = "30px"; 
+      bookmarkBtn.style.width = "30px";
       bookmarkBtn.style.height = "40px";
 
-      youtubeLeftControls = document.getElementsByClassName("ytp-left-controls")[0];
-      youtubePlayer = document.getElementsByClassName('video-stream')[0];
+      youtubeLeftControls =
+        document.getElementsByClassName("ytp-left-controls")[0];
+      youtubePlayer = document.getElementsByClassName("video-stream")[0];
 
       youtubeLeftControls.appendChild(bookmarkBtn);
       bookmarkBtn.addEventListener("click", addNewBookmarkEventHandler);
@@ -62,9 +68,13 @@ const newBookmark = {
       newVideoLoaded();
     } else if (type === "PLAY") {
       youtubePlayer.currentTime = value;
-    } else if ( type === "DELETE") {
-      currentVideoBookmarks = currentVideoBookmarks.filter((b) => b.time != value);
-      chrome.storage.sync.set({ [currentVideo]: JSON.stringify(currentVideoBookmarks) });
+    } else if (type === "DELETE") {
+      currentVideoBookmarks = currentVideoBookmarks.filter(
+        (b) => b.time != value
+      );
+      chrome.storage.sync.set({
+        [currentVideo]: JSON.stringify(currentVideoBookmarks),
+      });
 
       response(currentVideoBookmarks);
     }
@@ -73,7 +83,7 @@ const newBookmark = {
   newVideoLoaded();
 })();
 
-const getTime = t => {
+const getTime = (t) => {
   var date = new Date(0);
   date.setSeconds(t);
 
