@@ -4,7 +4,6 @@
   let currentVideoBookmarks = [];
 
   const fetchBookmarks = () => {
-    console.log("Fetching");
     return new Promise((resolve) => {
       chrome.storage.sync.get([currentVideo], (obj) => {
         resolve(obj[currentVideo] ? JSON.parse(obj[currentVideo]) : []);
@@ -35,10 +34,7 @@
       addedAt: "Added at " + formattedDate, // Store formatted date and time
     };
 
-    console.log(newBookmark);
-
     currentVideoBookmarks = await fetchBookmarks();
-    console.log("currentVideoBookmarks", currentVideoBookmarks);
 
     chrome.storage.sync.set({
       [currentVideo]: JSON.stringify(
@@ -47,7 +43,6 @@
     });
 
     currentVideoBookmarks = await fetchBookmarks();
-    console.log("currentVideoBookmarks", currentVideoBookmarks);
   };
 
   const newVideoLoaded = async () => {
@@ -63,7 +58,7 @@
       bookmarkBtn.className = "ytp-button " + "bookmark-btn";
       bookmarkBtn.title = "Click to bookmark current timestamp";
 
-      bookmarkBtn.style.width = "30px";
+      bookmarkBtn.style.width = "40px";
       bookmarkBtn.style.height = "40px";
 
       youtubeLeftControls =
