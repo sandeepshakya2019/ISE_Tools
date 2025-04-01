@@ -6,19 +6,29 @@
 
   const addNewBookmarkEventHandler = async () => {
     const currentTime = youtubePlayer.currentTime;
-    const currentDate = new Date().toLocaleString(); // Get current date and time
 
-    const newBookmark = {
-      time: currentTime,
-      desc: "Bookmark at " + getTime(currentTime),
-      addedAt: "Added at " + currentDate, // Store the formatted date and time
-    };
+// Get current date and format it as dd/mm/yyyy hh:mm:ss
+const now = new Date();
+const formattedDate = `${now.getDate().toString().padStart(2, "0")}/${
+  (now.getMonth() + 1).toString().padStart(2, "0")
+}/${now.getFullYear()} ${now.getHours().toString().padStart(2, "0")}:${
+  now.getMinutes().toString().padStart(2, "0")
+}:${now.getSeconds().toString().padStart(2, "0")}`;
+
+const newBookmark = {
+  time: currentTime,
+  desc: "Bookmark at " + getTime(currentTime),
+  addedAt: "Added at " + formattedDate, // Store formatted date and time
+};
+
+
+    console.log(newBookmark)
 
     // currentVideoBookmarks = await fetchBookmarks();
 
-    chrome.storage.sync.set({
-      [currentVideo]: JSON.stringify([...currentVideoBookmarks, newBookmark].sort((a, b) => a.time - b.time))
-    });
+    // chrome.storage.sync.set({
+    //   [currentVideo]: JSON.stringify([...currentVideoBookmarks, newBookmark].sort((a, b) => a.time - b.time))
+    // });
   };
 
   const newVideoLoaded = async () => {
@@ -33,8 +43,8 @@
       bookmarkBtn.className = "ytp-button " + "bookmark-btn";
       bookmarkBtn.title = "Click to bookmark current timestamp";
 
-      bookmarkBtn.style.width = "40px"; 
-    bookmarkBtn.style.height = "40px";
+      bookmarkBtn.style.width = "30px"; 
+      bookmarkBtn.style.height = "40px";
 
       youtubeLeftControls = document.getElementsByClassName("ytp-left-controls")[0];
       youtubePlayer = document.getElementsByClassName('video-stream')[0];
