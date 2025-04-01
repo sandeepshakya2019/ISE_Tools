@@ -1,53 +1,114 @@
+/* General container styles */
 .container {
   width: 280px;
-  color: #314d3e;
+  color: #d1e0e0; /* Light text color for dark mode */
 }
 
+/* Title style */
 .title {
   font-size: 14px;
   font-weight: bold;
   padding: 8px;
+  color: #f1f1f1; /* Light title color */
 }
 
+/* Textbox style */
 .textbox {
   width: 100%;
   font-size: 12px;
   margin: 0;
   padding: 0px 2px;
+  background-color: #333; /* Dark background for input fields */
+  color: #fff; /* Light text for input */
+  border: 1px solid #444; /* Dark border */
 }
 
+/* Focused textbox style */
 .textbox:focus {
   outline: 0;
   border-color: #66afe9;
 }
 
+/* Bookmarks container */
 .bookmarks {
   margin: 5px 5px;
   padding: 3px;
 }
 
-.bookmark {
-  display: flex;
-  border-bottom-color: #00254d;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  border-radius: 0.8rem;
-  padding: 3px;
-  padding-bottom: 7px;
-  margin-bottom: 7px;
-}
-
-.bookmark-title {
-  padding-left: 2px;
-}
-
+/* Bookmark controls (buttons, icons) */
 .bookmark-controls img {
   margin: 0 4px;
   width: 18px;
   height: 18px;
   cursor: pointer;
 }
+
 .bookmark-controls {
   flex: auto;
   text-align: right;
+}
+
+/* Bookmark item styling */
+.bookmark {
+  display: flex;
+  flex-direction: column; /* Align elements in a vertical column */
+  padding: 10px;
+  margin: 10px;
+  background-color: #1e1e1e; /* Dark background for bookmarks */
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Darker shadow for dark mode */
+}
+
+/* Bookmark title style */
+.bookmark-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #e0e0e0; /* Light title color */
+  margin-bottom: 5px;
+}
+
+/* Short description of the bookmark */
+.bookmark-short-desc {
+  font-size: 14px;
+  color: #b0b0b0; /* Lighter color for description */
+  margin-bottom: 5px;
+}
+
+/* Timestamp of when the bookmark was added */
+.bookmark-added-at {
+  font-size: 12px;
+  color: #888; /* Slightly lighter gray for the timestamp */
+  margin-bottom: 10px;
+}
+
+/* Controls section (buttons like play, delete) */
+.bookmark-controls {
+  display: flex;
+  justify-content: flex-start; /* Align buttons to the left */
+  gap: 10px; /* Space between buttons */
+}
+
+/* Button styling */
+.bookmark-controls button {
+  padding: 5px 10px;
+  background-color: #007bff; /* Blue buttons */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.bookmark-controls button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* General background for the page */
+body {
+  background-color: #121212; /* Dark background for the page */
+  color: #d1e0e0; /* Light text for the body */
+}
+
+/* Optional: For a smooth transition between light and dark mode */
+html {
+  transition: background-color 0.3s, color 0.3s;
 }

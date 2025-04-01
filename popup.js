@@ -4,14 +4,20 @@ const addNewBookmark = (bookmarks, bookmark) => {
   const bookmarkTitleElement = document.createElement("div");
   const controlsElement = document.createElement("div");
   const newBookmarkElement = document.createElement("div");
-  const addedAtElement = document.createElement("div"); // New element for "Added at"
+  const addedAtElement = document.createElement("div"); // Element for "Added at"
+  const shortDescElement = document.createElement("div"); // Element for "Short Description"
 
-  // Create the bookmark title
+  // Create the full bookmark description
   bookmarkTitleElement.textContent = bookmark.desc;
   bookmarkTitleElement.className = "bookmark-title";
 
+  // Create the short description
+  shortDescElement.textContent =
+    bookmark.shortDesc || "No short description available."; // Default text if no shortDesc
+  shortDescElement.className = "bookmark-short-desc"; // Optional: class for styling
+
   // Create the "Added at" text
-  addedAtElement.textContent = bookmark.addedAt; // Add the formatted date and time
+  addedAtElement.textContent = bookmark.addedAt; // Add formatted date and time
   addedAtElement.className = "bookmark-added-at"; // Optional: add a class for styling
 
   // Create controls for play and delete
@@ -24,8 +30,9 @@ const addNewBookmark = (bookmarks, bookmark) => {
   newBookmarkElement.className = "bookmark";
   newBookmarkElement.setAttribute("timestamp", bookmark.time);
 
-  // Append title, "Added at", and controls to the bookmark element
+  // Append elements: title, short description, "Added at", and controls
   newBookmarkElement.appendChild(bookmarkTitleElement);
+  newBookmarkElement.appendChild(shortDescElement); // Append the short description
   newBookmarkElement.appendChild(addedAtElement); // Append the "Added at" text
   newBookmarkElement.appendChild(controlsElement);
 
