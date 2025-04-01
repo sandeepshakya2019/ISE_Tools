@@ -29,11 +29,12 @@
       .padStart(2, "0")}`;
 
     const newBookmark = {
+      id: Math.floor(Math.random() * 1000000), // Generate a random ID
       time: currentTime,
       desc: "Bookmark at " + getTime(currentTime),
       addedAt: "Added at " + formattedDate, // Store formatted date and time
       shortDesc:
-        "Bookmark added it a short decription of rthis vdeios at bookamr", // Store formatted date and time
+        "Bookmark added with a short description of this video at bookmark", // Store short description
     };
 
     currentVideoBookmarks = await fetchBookmarks();
