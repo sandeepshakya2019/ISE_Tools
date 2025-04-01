@@ -4,20 +4,32 @@ const addNewBookmark = (bookmarks, bookmark) => {
   const bookmarkTitleElement = document.createElement("div");
   const controlsElement = document.createElement("div");
   const newBookmarkElement = document.createElement("div");
+  const addedAtElement = document.createElement("div"); // New element for "Added at"
 
+  // Create the bookmark title
   bookmarkTitleElement.textContent = bookmark.desc;
   bookmarkTitleElement.className = "bookmark-title";
-  controlsElement.className = "bookmark-controls";
 
+  // Create the "Added at" text
+  addedAtElement.textContent = bookmark.addedAt; // Add the formatted date and time
+  addedAtElement.className = "bookmark-added-at"; // Optional: add a class for styling
+
+  // Create controls for play and delete
+  controlsElement.className = "bookmark-controls";
   setBookmarkAttributes("play", onPlay, controlsElement);
   setBookmarkAttributes("delete", onDelete, controlsElement);
 
+  // Set up the new bookmark element
   newBookmarkElement.id = "bookmark-" + bookmark.time;
   newBookmarkElement.className = "bookmark";
   newBookmarkElement.setAttribute("timestamp", bookmark.time);
 
+  // Append title, "Added at", and controls to the bookmark element
   newBookmarkElement.appendChild(bookmarkTitleElement);
+  newBookmarkElement.appendChild(addedAtElement); // Append the "Added at" text
   newBookmarkElement.appendChild(controlsElement);
+
+  // Append the new bookmark to the parent container
   bookmarks.appendChild(newBookmarkElement);
 };
 

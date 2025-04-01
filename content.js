@@ -32,6 +32,8 @@
       time: currentTime,
       desc: "Bookmark at " + getTime(currentTime),
       addedAt: "Added at " + formattedDate, // Store formatted date and time
+      shortDesc:
+        "Bookmark added it a short decription of rthis vdeios at bookamr", // Store formatted date and time
     };
 
     currentVideoBookmarks = await fetchBookmarks();
