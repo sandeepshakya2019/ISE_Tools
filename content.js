@@ -6,9 +6,12 @@
 
   const addNewBookmarkEventHandler = async () => {
     const currentTime = youtubePlayer.currentTime;
+    const currentDate = new Date().toLocaleString(); // Get current date and time
+
     const newBookmark = {
       time: currentTime,
       desc: "Bookmark at " + getTime(currentTime),
+      addedAt: "Added at " + currentDate, // Store the formatted date and time
     };
 
     // currentVideoBookmarks = await fetchBookmarks();
@@ -21,7 +24,7 @@
   const newVideoLoaded = async () => {
     const bookmarkBtnExists = document.getElementsByClassName("bookmark-btn")[0];
 
-    currentVideoBookmarks = await fetchBookmarks();
+    // currentVideoBookmarks = await fetchBookmarks();
 
     if (!bookmarkBtnExists) {
       const bookmarkBtn = document.createElement("img");
