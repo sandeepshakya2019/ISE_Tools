@@ -1,87 +1,86 @@
 import { getActiveTabURL } from "./utils.js";
 
 // Function to add a new bookmark
-const addNewBookmark = (bookmarks, bookmark) => {
-  const bookmarkTitleElement = document.createElement("div");
-  const controlsElement = document.createElement("div");
+const addNewBookmark = (bookmarks, bookmark, currentVideo) => {
   const newBookmarkElement = document.createElement("div");
-  const addedAtElement = document.createElement("div"); // Element for "Added at"
-  const shortDescElement = document.createElement("div"); // Element for "Short Description"
+  newBookmarkElement.className = "bookmark";
+  newBookmarkElement.id = "bookmark-" + bookmark.time;
+  newBookmarkElement.setAttribute("timestamp", bookmark.time);
 
-  // Create the full bookmark description
+  // Create title element
+  const bookmarkTitleElement = document.createElement("div");
   bookmarkTitleElement.textContent = bookmark.desc;
   bookmarkTitleElement.className = "bookmark-title";
 
-  // Create the short description
+  // Create short description
+  const shortDescElement = document.createElement("div");
   shortDescElement.textContent =
-    bookmark.shortDesc || "No short description available."; // Default text if no shortDesc
-  shortDescElement.className = "bookmark-short-desc"; // Optional: class for styling
+    bookmark.shortDesc || "No short description available.";
+  shortDescElement.className = "bookmark-short-desc";
 
-  // Create the "Added at" text
-  addedAtElement.textContent = bookmark.addedAt; // Add formatted date and time
-  addedAtElement.className = "bookmark-added-at"; // Optional: add a class for styling
+  // Create "Added at" element
+  const addedAtElement = document.createElement("div");
+  addedAtElement.textContent = `Added at: ${bookmark.addedAt}`;
+  addedAtElement.className = "bookmark-added-at";
 
-  // Create controls for play, delete, and edit
+  // Create controls container
+  const controlsElement = document.createElement("div");
   controlsElement.className = "bookmark-controls";
-  setBookmarkAttributes("play", onPlay, controlsElement);
-  setBookmarkAttributes("delete", onDelete, controlsElement);
 
-  // Create the Edit button
+  // Add play, delete, and edit buttons
+  setBookmarkAttributes("play", () => onPlay(bookmark.time), controlsElement);
+  setBookmarkAttributes(
+    "delete",
+    () => onDelete(bookmark.time, currentVideo),
+    controlsElement
+  );
+
+  // Create Edit button
   const editButton = document.createElement("img");
   editButton.src = "assets/edit.png";
   editButton.className = "edit-button";
   editButton.title = "Edit Bookmark";
   editButton.addEventListener("click", () =>
-    editBookmark(bookmark, newBookmarkElement, editButton)
+    editBookmark(bookmark, newBookmarkElement, editButton, currentVideo)
   );
 
-  // Add the Edit button to controls
   controlsElement.appendChild(editButton);
 
-  // Set up the new bookmark element
-  newBookmarkElement.id = "bookmark-" + bookmark.time;
-  newBookmarkElement.className = "bookmark";
-  newBookmarkElement.setAttribute("timestamp", bookmark.time);
-
-  // Append elements: title, short description, "Added at", and controls
+  // Append elements to bookmark container
   newBookmarkElement.appendChild(bookmarkTitleElement);
-  newBookmarkElement.appendChild(shortDescElement); // Append the short description
-  newBookmarkElement.appendChild(addedAtElement); // Append the "Added at" text
+  newBookmarkElement.appendChild(shortDescElement);
+  newBookmarkElement.appendChild(addedAtElement);
   newBookmarkElement.appendChild(controlsElement);
 
-  // Append the new bookmark to the parent container
+  // Add the new bookmark to the list
   bookmarks.appendChild(newBookmarkElement);
 };
 
 // Function to handle editing the bookmark description
-const editBookmark = (bookmark, bookmarkElement, editButton) => {
+const editBookmark = (bookmark, bookmarkElement, editButton, currentVideo) => {
   const bookmarkDescElement = bookmarkElement.querySelector(
     ".bookmark-short-desc"
   );
   const currentDesc = bookmarkDescElement.textContent;
 
-  // Hide the Edit button as soon as editing starts
   editButton.style.display = "none";
 
-  // Create a textarea for editing the description (allow for multiline input)
   const editInput = document.createElement("textarea");
   editInput.value = currentDesc;
-  editInput.className = "edit-input"; // Optional: for styling
-  editInput.rows = 4; // Set initial rows, can be adjusted as needed
-  editInput.style.width = "100%"; // Make the width 100% of the container
-  editInput.style.resize = "none"; // Prevent resizing of the textarea
+  editInput.className = "edit-input";
+  editInput.rows = 2;
+  editInput.style.width = "100%";
+  editInput.style.resize = "none";
 
-  // Replace the short description text with the textarea
-  bookmarkDescElement.textContent = ""; // Remove the old description
+  bookmarkDescElement.textContent = "";
   bookmarkDescElement.appendChild(editInput);
 
-  // Add Save and Cancel buttons with images
   const saveButton = document.createElement("img");
   saveButton.src = "assets/save.png";
   saveButton.className = "save-button";
   saveButton.title = "Save Bookmark";
   saveButton.addEventListener("click", () =>
-    saveBookmark(bookmark, editInput, bookmarkElement, editButton)
+    saveBookmark(bookmark, editInput, bookmarkElement, editButton, currentVideo)
   );
 
   const cancelButton = document.createElement("img");
@@ -92,151 +91,121 @@ const editBookmark = (bookmark, bookmarkElement, editButton) => {
     cancelEdit(bookmarkDescElement, currentDesc, editButton)
   );
 
-  // Append Save and Cancel buttons to the controls
   const controls = bookmarkElement.querySelector(".bookmark-controls");
   controls.appendChild(saveButton);
   controls.appendChild(cancelButton);
 };
 
-const saveBookmark = (bookmark, editInput, bookmarkElement, editButton) => {
-  // Get the new description from the input field
-  const newDesc = editInput.value;
-  bookmark.shortDesc = newDesc; // Update bookmark data
+// Save edited bookmark to Chrome storage
+const saveBookmark = (
+  bookmark,
+  editInput,
+  bookmarkElement,
+  editButton,
+  currentVideo
+) => {
+  const newDesc = editInput.value.trim();
 
-  // Update the bookmark UI
+  if (!newDesc) return;
+
+  bookmark.shortDesc = newDesc;
+
   const bookmarkDescElement = bookmarkElement.querySelector(
     ".bookmark-short-desc"
   );
-  bookmarkDescElement.textContent = newDesc; // Update description in the UI
+  bookmarkDescElement.textContent = newDesc;
 
-  // Remove the input field, Save and Cancel buttons from controls
   const controls = bookmarkElement.querySelector(".bookmark-controls");
+  controls.querySelector(".save-button")?.remove();
+  controls.querySelector(".cancel-button")?.remove();
 
-  // Find and remove the Save and Cancel buttons
-  const saveButton = controls.querySelector(".save-button");
-  const cancelButton = controls.querySelector(".cancel-button");
+  editButton.style.display = "inline-block";
 
-  if (saveButton) controls.removeChild(saveButton);
-  if (cancelButton) controls.removeChild(cancelButton);
+  chrome.storage.sync.get([currentVideo], (data) => {
+    let bookmarks = data[currentVideo] ? JSON.parse(data[currentVideo]) : [];
+    bookmarks = bookmarks.map((b) =>
+      b.time === bookmark.time ? { ...b, shortDesc: newDesc } : b
+    );
 
-  // Re-show the Edit button
-  if (editButton) editButton.style.display = "inline-block"; // Show Edit button again
+    chrome.storage.sync.set(
+      { [currentVideo]: JSON.stringify(bookmarks) },
+      () => {
+        console.log("Bookmark updated in storage:", bookmarks);
+      }
+    );
+  });
 };
 
-// Cancel editing and revert to the original description
+// Cancel editing
 const cancelEdit = (bookmarkDescElement, currentDesc, editButton) => {
-  // Revert the description to the original text (before editing)
   bookmarkDescElement.textContent = currentDesc;
-
-  // Find the controls element. If it's not a direct parent, we might need to traverse differently.
   const controls =
     bookmarkDescElement.parentNode.querySelector(".bookmark-controls");
-
-  if (controls) {
-    console.log("Controls found:", controls);
-
-    // Find and remove the Save and Cancel buttons
-    const saveButton = controls.querySelector(".save-button");
-    const cancelButton = controls.querySelector(".cancel-button");
-
-    console.log("Save button:", saveButton);
-    console.log("Cancel button:", cancelButton);
-
-    if (saveButton) {
-      controls.removeChild(saveButton); // Remove Save button
-    }
-
-    if (cancelButton) {
-      controls.removeChild(cancelButton); // Remove Cancel button
-    }
-  } else {
-    console.log("No controls element found");
-  }
-
-  // Re-show the Edit button (Make sure it's visible again)
-  if (editButton) {
-    editButton.style.display = "inline-block"; // Show Edit button again
-  }
+  controls.querySelector(".save-button")?.remove();
+  controls.querySelector(".cancel-button")?.remove();
+  editButton.style.display = "inline-block";
 };
 
-// Function to view all bookmarks
-const viewBookmarks = (currentBookmarks = []) => {
+// View bookmarks
+const viewBookmarks = (currentBookmarks = [], currentVideo) => {
   const bookmarksElement = document.getElementById("bookmarks");
   bookmarksElement.innerHTML = "";
 
   if (currentBookmarks.length > 0) {
-    for (let i = 0; i < currentBookmarks.length; i++) {
-      const bookmark = currentBookmarks[i];
-      addNewBookmark(bookmarksElement, bookmark);
-    }
+    currentBookmarks.forEach((bookmark) => {
+      addNewBookmark(bookmarksElement, bookmark, currentVideo);
+    });
   } else {
     bookmarksElement.innerHTML = '<i class="row">No bookmarks to show</i>';
   }
-
-  return;
 };
 
-// Function to play bookmark (simulated)
-const onPlay = async (e) => {
-  const bookmarkTime = e.target.parentNode.parentNode.getAttribute("timestamp");
+// Play a bookmark
+const onPlay = async (bookmarkTime) => {
   const activeTab = await getActiveTabURL();
+  chrome.tabs.sendMessage(activeTab.id, { type: "PLAY", value: bookmarkTime });
+};
 
-  chrome.tabs.sendMessage(activeTab.id, {
-    type: "PLAY",
-    value: bookmarkTime,
+// Delete a bookmark
+const onDelete = (bookmarkTime, currentVideo) => {
+  chrome.storage.sync.get([currentVideo], (data) => {
+    let bookmarks = data[currentVideo] ? JSON.parse(data[currentVideo]) : [];
+    bookmarks = bookmarks.filter((b) => b.time !== bookmarkTime);
+
+    chrome.storage.sync.set(
+      { [currentVideo]: JSON.stringify(bookmarks) },
+      () => {
+        document.getElementById("bookmark-" + bookmarkTime)?.remove();
+        console.log("Bookmark deleted from storage:", bookmarks);
+      }
+    );
   });
 };
 
-// Function to delete a bookmark
-const onDelete = async (e) => {
-  const activeTab = await getActiveTabURL();
-  const bookmarkTime = e.target.parentNode.parentNode.getAttribute("timestamp");
-  const bookmarkElementToDelete = document.getElementById(
-    "bookmark-" + bookmarkTime
-  );
-
-  bookmarkElementToDelete.parentNode.removeChild(bookmarkElementToDelete);
-
-  chrome.tabs.sendMessage(
-    activeTab.id,
-    {
-      type: "DELETE",
-      value: bookmarkTime,
-    },
-    viewBookmarks
-  );
-};
-
-// Function to set bookmark attributes for controls (play, delete)
-const setBookmarkAttributes = (src, eventListener, controlParentElement) => {
+// Add play and delete attributes
+const setBookmarkAttributes = (action, eventListener, controlParentElement) => {
   const controlElement = document.createElement("img");
-
-  controlElement.src = "assets/" + src + ".png";
-  controlElement.title = src;
+  controlElement.src = `assets/${action}.png`;
+  controlElement.title = action;
   controlElement.addEventListener("click", eventListener);
   controlParentElement.appendChild(controlElement);
 };
 
-// Initialize on DOMContentLoaded
+// Initialize on page load
 document.addEventListener("DOMContentLoaded", async () => {
   const activeTab = await getActiveTabURL();
-  const queryParameters = activeTab.url.split("?")[1];
-  const urlParameters = new URLSearchParams(queryParameters);
-
-  const currentVideo = urlParameters.get("v");
+  const urlParams = new URLSearchParams(activeTab.url.split("?")[1]);
+  const currentVideo = urlParams.get("v");
 
   if (activeTab.url.includes("youtube.com/watch") && currentVideo) {
     chrome.storage.sync.get([currentVideo], (data) => {
-      const currentVideoBookmarks = data[currentVideo]
+      const bookmarks = data[currentVideo]
         ? JSON.parse(data[currentVideo])
         : [];
-
-      viewBookmarks(currentVideoBookmarks);
+      viewBookmarks(bookmarks, currentVideo);
     });
   } else {
-    const container = document.getElementsByClassName("container")[0];
-
-    container.innerHTML =
+    document.querySelector(".container").innerHTML =
       '<div class="title">This is not a YouTube video page.</div>';
   }
 });
