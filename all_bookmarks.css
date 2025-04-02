@@ -1,0 +1,99 @@
+/* General Styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+  color: #e0e0e0;
+}
+
+/* Container */
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+/* Title */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #bb86fc;
+}
+
+/* Video Bookmark Section */
+.video-bookmark-section {
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+}
+
+.video-bookmark-section h3 {
+  font-size: 18px;
+  color: #03dac6;
+  margin-bottom: 10px;
+}
+
+/* Bookmark List */
+.video-bookmark-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.video-bookmark-section li {
+  background: #2a2a2a;
+  margin: 8px 0;
+  padding: 10px;
+  border-left: 5px solid #03dac6;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Bookmark Description */
+.video-bookmark-section li strong {
+  font-size: 16px;
+  color: #e0e0e0;
+}
+
+/* Play Button */
+.video-bookmark-section li a {
+  text-decoration: none;
+  background: #bb86fc;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.video-bookmark-section li a:hover {
+  background: #9b59ff;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bb86fc;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9b59ff;
+}

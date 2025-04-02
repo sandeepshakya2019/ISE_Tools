@@ -209,3 +209,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       '<div class="title">This is not a YouTube video page.</div>';
   }
 });
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const activeTab = await getActiveTabURL();
+  const urlParams = new URLSearchParams(activeTab.url.split("?")[1]);
+  const currentVideo = urlParams.get("v");
+
+  if (activeTab.url.includes("youtube.com/watch") && currentVideo) {
+    chrome.storage.sync.get([currentVideo], (data) => {
+      const bookmarks = data[currentVideo]
+        ? JSON.parse(data[currentVideo])
+        : [];
+      viewBookmarks(bookmarks, currentVideo);
+    });
+  } else {
+    document.querySelector(".container").innerHTML =
+      '<div class="title">This is not a YouTube video page.</div>';
+  }
+});
