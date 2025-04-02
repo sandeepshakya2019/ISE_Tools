@@ -112,3 +112,57 @@ body {
 html {
   transition: background-color 0.3s, color 0.3s;
 }
+
+/* Container styling */
+/* .container {
+  background-color: #252525;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+} */
+
+/* Title styling */
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.view-all-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.view-all-button:hover {
+  background-color: #0056b3;
+}
+
+/* Bookmark list */
+.bookmarks {
+  text-align: left;
+  margin-top: 10px;
+}
+
+/* No bookmarks message */
+.row {
+  color: #aaa;
+  font-style: italic;
+}
+
+.bookmark-short-desc {
+  color: #ddd;
+  font-size: 14px;
+  margin-top: 5px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal; /* Allows wrapping */
+  max-width: 100%;
+}

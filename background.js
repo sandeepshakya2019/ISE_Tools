@@ -1,6 +1,9 @@
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    console.log("fine", tab.url)
-  if (changeInfo.status === "complete" && tab.url && tab.url.includes("youtube.com/watch")) {
+  if (
+    changeInfo.status === "complete" &&
+    tab.url &&
+    tab.url.includes("youtube.com/watch")
+  ) {
     const queryParameters = tab.url.split("?")[1];
     if (!queryParameters) return;
 
@@ -8,9 +11,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     const videoId = urlParameters.get("v");
 
     if (videoId) {
-      chrome.tabs.sendMessage(tabId, { type: "NEW", videoId }).catch((error) => {
-        console.warn("Content script not available yet:", error);
-      });
+      chrome.tabs
+        .sendMessage(tabId, { type: "NEW", videoId })
+        .catch((error) => {
+          console.warn("Content script not available yet:", error);
+        });
     }
   }
 });
