@@ -27,10 +27,38 @@ document.addEventListener("DOMContentLoaded", async () => {
       const bookmarkList = document.createElement("ul");
       videoBookmarks.forEach((bookmark) => {
         const bookmarkItem = document.createElement("li");
-        bookmarkItem.innerHTML = `
-          <strong>${bookmark.desc}</strong> - ${bookmark.shortDesc} 
-          <a href="https://www.youtube.com/watch?v=${videoId}&t=${bookmark.time}s" target="_blank">▶ Play</a>
-        `;
+        bookmarkItem.className = "bookmark-item"; // Added class for styling
+
+        // Description
+        const bookmarkText = document.createElement("span");
+        bookmarkText.innerHTML = `<strong>${bookmark.desc}</strong> - ${bookmark.shortDesc}`;
+
+        // Flex container for buttons
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "button-container"; // Flex container
+
+        // Play Button
+        const playButton = document.createElement("a");
+        playButton.href = `https://www.youtube.com/watch?v=${videoId}&t=${bookmark.time}s`;
+        playButton.target = "_blank";
+        playButton.textContent = "▶";
+        playButton.className = "play-button";
+
+        // Delete Button
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "⚔️";
+        deleteButton.className = "delete-button";
+        deleteButton.addEventListener("click", () => {
+          deleteBookmark(videoId, bookmark.time, bookmarkItem, videoSection);
+        });
+
+        // Append buttons to container
+        buttonContainer.appendChild(playButton);
+        buttonContainer.appendChild(deleteButton);
+
+        // Append elements to list item
+        bookmarkItem.appendChild(bookmarkText);
+        bookmarkItem.appendChild(buttonContainer);
         bookmarkList.appendChild(bookmarkItem);
       });
 
@@ -59,4 +87,27 @@ const getVideoTitle = async (videoId) => {
     console.error("Error fetching video title:", error);
     return "Unknown Video";
   }
+};
+
+// Function to delete a bookmark
+const deleteBookmark = (videoId, time, bookmarkElement, videoSection) => {
+  chrome.storage.sync.get([videoId], (data) => {
+    let bookmarks = data[videoId] ? JSON.parse(data[videoId]) : [];
+
+    // Filter out the bookmark to delete
+    bookmarks = bookmarks.filter((b) => b.time !== time);
+
+    // Update Chrome storage
+    chrome.storage.sync.set({ [videoId]: JSON.stringify(bookmarks) }, () => {
+      console.log("Bookmark deleted!");
+
+      // Remove bookmark from UI
+      bookmarkElement.remove();
+
+      // If no bookmarks left, remove the entire section
+      if (bookmarks.length === 0) {
+        videoSection.remove();
+      }
+    });
+  });
 };

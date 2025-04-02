@@ -97,3 +97,91 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #9b59ff;
 }
+
+.delete-button {
+  background-color: #faaeae;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-left: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.delete-button:hover {
+  background-color: #cc0000;
+}
+
+.video-bookmark-section {
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+h3 a {
+  color: #ffcc00;
+  text-decoration: none;
+}
+
+h3 a:hover {
+  text-decoration: underline;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.bookmark-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2c2c2c;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.bookmark-item span {
+  flex: 1;
+  word-wrap: break-word;
+  color: white;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.play-button,
+.delete-button {
+  padding: 5px 12px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.play-button {
+  background-color: #4caf50;
+  color: white;
+  text-decoration: none;
+}
+
+.play-button:hover {
+  background-color: #388e3c;
+}
+
+.delete-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+}
+
+.delete-button:hover {
+  background-color: #cc0000;
+}
