@@ -13,6 +13,25 @@
       </button>
 
       <h1>📌 All Bookmarked Videos</h1>
+      <!-- Storage Usage Display -->
+      <div class="storage-info">
+        <p>
+          <strong>Chrome's Sync Storage Limit:</strong> 100 KB (102,400 bytes)
+          per extension.
+        </p>
+        <p>
+          <strong>Estimated Bookmark Capacity:</strong> You can store
+          approximately <strong>500 bookmarks</strong> before reaching the
+          limit.
+        </p>
+      </div>
+      <div class="storage-container">
+        <span id="storage-text">Total Storage Used: 0%</span>
+        <div class="storage-bar">
+          <div id="storage-progress"></div>
+        </div>
+      </div>
+      <br />
       <div id="all-bookmarks">Loading bookmarks...</div>
     </div>
     <script src="all_bookmarks.js"></script>

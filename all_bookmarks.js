@@ -1,11 +1,32 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const allBookmarksElement = document.getElementById("all-bookmarks");
   const deleteAllButton = document.getElementById("delete-all");
+  const storageText = document.getElementById("storage-text");
+  const storageProgress = document.getElementById("storage-progress");
 
   // Function to format timestamp
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleString(); // Converts to readable format
+  };
+
+  // Function to update total storage usage display
+  const updateTotalStorageUsage = () => {
+    chrome.storage.sync.getBytesInUse(null, (bytesInUse) => {
+      const maxStorage = 102400; // Chrome sync storage limit (100 KB)
+      const percentageUsed = ((bytesInUse / maxStorage) * 100).toFixed(2);
+
+      // Update text and progress bar
+      storageText.textContent = `Total Storage Used: ${percentageUsed}% (${bytesInUse} bytes)`;
+      storageProgress.style.width = `${percentageUsed}%`;
+
+      // Change color if storage is almost full
+      if (percentageUsed > 80) {
+        storageProgress.style.backgroundColor = "#ff5733"; // Red (warning)
+      } else {
+        storageProgress.style.backgroundColor = "#007bff"; // Blue (normal)
+      }
+    });
   };
 
   // Function to render all bookmarks
@@ -82,6 +103,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         videoSection.appendChild(bookmarkList);
         allBookmarksElement.appendChild(videoSection);
       });
+
+      // Update storage usage after rendering
+      updateTotalStorageUsage();
     });
   };
 
@@ -100,6 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           () => {
             console.log("Bookmark deleted!");
             bookmarkElement.remove();
+            updateTotalStorageUsage(); // Update storage after deletion
           }
         );
       } else {
@@ -107,6 +132,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         chrome.storage.sync.remove(videoId, () => {
           console.log("No bookmarks left for this video. Removing...");
           videoSection.remove();
+          updateTotalStorageUsage(); // Update storage after removal
         });
       }
     });
@@ -123,6 +149,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         alert("All bookmarks deleted successfully!");
         allBookmarksElement.innerHTML = "<i>No bookmarks saved yet.</i>";
         deleteAllButton.style.display = "none"; // Hide delete button after deletion
+        updateTotalStorageUsage(); // Update storage after clearing
       });
     }
   });
@@ -137,6 +164,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (bookmarks.length === 0) {
           chrome.storage.sync.remove(videoId, () => {
             console.log(`Removed empty bookmark entry: ${videoId}`);
+            updateTotalStorageUsage(); // Update storage after cleanup
           });
         }
       });
