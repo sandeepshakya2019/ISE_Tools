@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const deleteAllButton = document.getElementById("delete-all");
   const storageText = document.getElementById("storage-text");
   const storageProgress = document.getElementById("storage-progress");
+  const exportButton = document.getElementById("export-button");
+  const importButton = document.getElementById("import-button");
+  const importFileInput = document.getElementById("import-file");
 
   // Function to format timestamp
   const formatTimestamp = (timestamp) => {
@@ -21,11 +24,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       storageProgress.style.width = `${percentageUsed}%`;
 
       // Change color if storage is almost full
-      if (percentageUsed > 80) {
-        storageProgress.style.backgroundColor = "#ff5733"; // Red (warning)
-      } else {
-        storageProgress.style.backgroundColor = "#007bff"; // Blue (normal)
-      }
+      storageProgress.style.backgroundColor =
+        percentageUsed > 80 ? "#ff5733" : "#007bff";
     });
   };
 
@@ -34,27 +34,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     chrome.storage.sync.get(null, (data) => {
       allBookmarksElement.innerHTML = ""; // Clear previous list
 
-      // Check if storage is empty
       const videoIds = Object.keys(data).filter((id) => !id.endsWith("_title"));
       if (videoIds.length === 0) {
         allBookmarksElement.innerHTML = "<i>No bookmarks saved yet.</i>";
-        deleteAllButton.style.display = "none"; // Hide delete button
+        deleteAllButton.style.display = "none";
         return;
       }
 
-      deleteAllButton.style.display = "block"; // Show delete button
+      deleteAllButton.style.display = "block";
 
       videoIds.forEach((videoId) => {
         let videoBookmarks = JSON.parse(data[videoId]);
-        if (videoBookmarks.length === 0) return; // Skip empty entries
+        if (videoBookmarks.length === 0) return;
 
-        // Sort bookmarks by timestamp (latest first)
         videoBookmarks.sort((a, b) => b.timestamp - a.timestamp);
 
-        // Fetch stored video title
         const videoTitle = data[`${videoId}_title`] || "Unknown Video";
-
-        // Create video section
         const videoSection = document.createElement("div");
         videoSection.className = "video-bookmark-section";
 
@@ -67,22 +62,18 @@ document.addEventListener("DOMContentLoaded", async () => {
           const bookmarkItem = document.createElement("li");
           bookmarkItem.className = "bookmark-item";
 
-          // Description
           const bookmarkText = document.createElement("span");
           bookmarkText.innerHTML = `<strong>${bookmark.desc}</strong> - ${bookmark.shortDesc} <br> <small>🕒 Added at: ${bookmark.addedAt}</small>`;
 
-          // Flex container for buttons
           const buttonContainer = document.createElement("div");
           buttonContainer.className = "button-container";
 
-          // Play Button
           const playButton = document.createElement("a");
           playButton.href = `https://www.youtube.com/watch?v=${videoId}&t=${bookmark.time}s`;
           playButton.target = "_blank";
           playButton.textContent = "▶";
           playButton.className = "play-button";
 
-          // Delete Button
           const deleteButton = document.createElement("button");
           deleteButton.textContent = "⚔️";
           deleteButton.className = "delete-button";
@@ -90,11 +81,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             deleteBookmark(videoId, bookmark.time, bookmarkItem, videoSection);
           });
 
-          // Append buttons to container
           buttonContainer.appendChild(playButton);
           buttonContainer.appendChild(deleteButton);
 
-          // Append elements to list item
           bookmarkItem.appendChild(bookmarkText);
           bookmarkItem.appendChild(buttonContainer);
           bookmarkList.appendChild(bookmarkItem);
@@ -104,7 +93,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         allBookmarksElement.appendChild(videoSection);
       });
 
-      // Update storage usage after rendering
       updateTotalStorageUsage();
     });
   };
@@ -140,37 +128,78 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Function to delete ALL bookmarks
   deleteAllButton.addEventListener("click", () => {
-    if (
-      confirm(
-        "Are you sure you want to delete all bookmarks? This action cannot be undone."
-      )
-    ) {
+    if (confirm("Are you sure you want to delete all bookmarks?")) {
       chrome.storage.sync.clear(() => {
         alert("All bookmarks deleted successfully!");
         allBookmarksElement.innerHTML = "<i>No bookmarks saved yet.</i>";
-        deleteAllButton.style.display = "none"; // Hide delete button after deletion
-        updateTotalStorageUsage(); // Update storage after clearing
+        deleteAllButton.style.display = "none";
+        updateTotalStorageUsage();
       });
     }
   });
 
-  // Function to remove empty bookmark entries
-  const cleanUpEmptyBookmarks = () => {
+  // Function to export bookmarks as JSON
+  function exportBookmarks() {
     chrome.storage.sync.get(null, (data) => {
-      const videoIds = Object.keys(data).filter((id) => !id.endsWith("_title"));
+      if (Object.keys(data).length === 0) {
+        alert("No bookmarks to export!");
+        return;
+      }
 
-      videoIds.forEach((videoId) => {
-        const bookmarks = JSON.parse(data[videoId] || "[]");
-        if (bookmarks.length === 0) {
-          chrome.storage.sync.remove(videoId, () => {
-            console.log(`Removed empty bookmark entry: ${videoId}`);
-            updateTotalStorageUsage(); // Update storage after cleanup
-          });
-        }
-      });
+      const jsonData = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonData], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "bookmarks_export.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
     });
-  };
+  }
 
-  cleanUpEmptyBookmarks();
+  // Function to import bookmarks from a JSON file
+  async function importBookmarks(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+      try {
+        const importedData = JSON.parse(e.target.result);
+
+        chrome.storage.sync.get(null, async (existingData) => {
+          // Merge data in chunks to prevent freezing
+          const mergedData = { ...existingData, ...importedData };
+
+          for (const [key, value] of Object.entries(mergedData)) {
+            await new Promise((resolve) => {
+              chrome.storage.sync.set({ [key]: value }, resolve);
+            });
+          }
+
+          alert("Bookmarks imported successfully!");
+
+          // Delay reload to avoid performance issues
+          setTimeout(() => {
+            location.reload();
+          }, 500);
+        });
+      } catch (error) {
+        alert("Invalid file format! Please upload a valid JSON file.");
+      }
+    };
+
+    reader.readAsText(file);
+  }
+
+  // Attach event listeners
+  exportButton.addEventListener("click", exportBookmarks);
+  importButton.addEventListener("click", () => importFileInput.click());
+  importFileInput.addEventListener("change", importBookmarks);
+
   renderBookmarks();
 });

@@ -8,9 +8,23 @@
   </head>
   <body>
     <div class="container">
-      <button id="delete-all" class="delete-all-button">
-        ⚔️ Delete All Bookmarks
-      </button>
+      <div class="button-container">
+        <button id="delete-all" class="delete-all-button">
+          ⚔️ Delete All Bookmarks
+        </button>
+        <button id="export-button" class="export-button">
+          📥 Export Bookmarks
+        </button>
+        <button id="import-button" class="import-button">
+          📤 Import Bookmarks
+        </button>
+        <input
+          type="file"
+          id="import-file"
+          class="import-file"
+          accept=".json"
+        />
+      </div>
 
       <h1>📌 All Bookmarked Videos</h1>
       <!-- Storage Usage Display -->

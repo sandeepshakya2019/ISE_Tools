@@ -201,3 +201,149 @@ body {
   background: #333;
   transform: scale(1.05);
 }
+
+/* Delete All Button */
+.delete-all-button {
+  background-color: #ff4444; /* Dark red */
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.3s ease-in-out, transform 0.2s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
+}
+
+/* Hover Effect */
+.delete-all-button:hover {
+  background-color: #cc0000; /* Darker red */
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(255, 0, 0, 0.3);
+}
+
+/* Click Effect */
+.delete-all-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(255, 0, 0, 0.4);
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.delete-all-button {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.export-button {
+  background-color: #008cba;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 10px;
+  transition: background 0.3s ease-in-out, transform 0.2s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+}
+
+.export-button:hover {
+  background-color: #0073a8;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 140, 186, 0.3);
+}
+
+.export-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(0, 140, 186, 0.4);
+}
+
+.export-button,
+.import-button {
+  background-color: #008cba;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 10px;
+  transition: background 0.3s ease-in-out, transform 0.2s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+}
+
+.export-button:hover,
+.import-button:hover {
+  background-color: #0073a8;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 140, 186, 0.3);
+}
+
+.export-button:active,
+.import-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(0, 140, 186, 0.4);
+}
+
+.import-file {
+  display: none;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px; /* Space between buttons */
+  justify-content: center; /* Center align */
+  align-items: center;
+  margin-top: 10px;
+}
+
+.import-file {
+  display: none; /* Hide the file input */
+}
+
+.export-button {
+  background-color: #4caf50; /* Green */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.export-button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.import-button {
+  background-color: #f39c12; /* Orange */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.import-button:hover {
+  background-color: #e67e22;
+  transform: scale(1.05);
+}
