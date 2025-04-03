@@ -29,70 +29,73 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   };
 
-  // Function to render all bookmarks
   const renderBookmarks = () => {
     chrome.storage.sync.get(null, (data) => {
-      allBookmarksElement.innerHTML = ""; // Clear previous list
-
+      allBookmarksElement.innerHTML = "";
       const videoIds = Object.keys(data).filter((id) => !id.endsWith("_title"));
       if (videoIds.length === 0) {
         allBookmarksElement.innerHTML = "<i>No bookmarks saved yet.</i>";
         deleteAllButton.style.display = "none";
         return;
       }
-
       deleteAllButton.style.display = "block";
-
       videoIds.forEach((videoId) => {
         let videoBookmarks = JSON.parse(data[videoId]);
         if (videoBookmarks.length === 0) return;
-
         videoBookmarks.sort((a, b) => b.timestamp - a.timestamp);
-
         const videoTitle = data[`${videoId}_title`] || "Unknown Video";
         const videoSection = document.createElement("div");
         videoSection.className = "video-bookmark-section";
-
         const videoTitleElement = document.createElement("h3");
         videoTitleElement.innerHTML = `🎥 <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">${videoTitle}</a>`;
         videoSection.appendChild(videoTitleElement);
-
+        const shareButton = document.createElement("button");
+        shareButton.textContent = "📤";
+        shareButton.className = "share-button";
+        shareButton.addEventListener("click", () => {
+          let shareText = `📌 *Bookmarks for ${videoTitle}:*\n\n`;
+          videoBookmarks.forEach((bookmark, index) => {
+            const url = `https://www.youtube.com/watch?v=${videoId}&t=${bookmark.time}s`;
+            shareText += `${index + 1}. *${bookmark.shortDesc}*\n🔗 ${url}\n\n`;
+          });
+          const whatsappUrl = `https://web.whatsapp.com/send?text=${encodeURIComponent(
+            shareText
+          )}`;
+          window.open(whatsappUrl, "_blank");
+        });
+        videoSection.appendChild(shareButton);
         const bookmarkList = document.createElement("ul");
-        videoBookmarks.forEach((bookmark) => {
+        videoBookmarks.forEach((bookmark, index) => {
           const bookmarkItem = document.createElement("li");
           bookmarkItem.className = "bookmark-item";
-
           const bookmarkText = document.createElement("span");
-          bookmarkText.innerHTML = `<strong>${bookmark.desc}</strong> - ${bookmark.shortDesc} <br> <small>🕒 Added at: ${bookmark.addedAt}</small>`;
-
+          bookmarkText.innerHTML = `<strong>${index + 1}. ${
+            bookmark.desc
+          }</strong> - ${bookmark.shortDesc} <br> <small>🕒 Added at: ${
+            bookmark.addedAt
+          }</small>`;
           const buttonContainer = document.createElement("div");
           buttonContainer.className = "button-container";
-
           const playButton = document.createElement("a");
           playButton.href = `https://www.youtube.com/watch?v=${videoId}&t=${bookmark.time}s`;
           playButton.target = "_blank";
           playButton.textContent = "▶";
           playButton.className = "play-button";
-
           const deleteButton = document.createElement("button");
           deleteButton.textContent = "⚔️";
           deleteButton.className = "delete-button";
           deleteButton.addEventListener("click", () => {
             deleteBookmark(videoId, bookmark.time, bookmarkItem, videoSection);
           });
-
           buttonContainer.appendChild(playButton);
           buttonContainer.appendChild(deleteButton);
-
           bookmarkItem.appendChild(bookmarkText);
           bookmarkItem.appendChild(buttonContainer);
           bookmarkList.appendChild(bookmarkItem);
         });
-
         videoSection.appendChild(bookmarkList);
         allBookmarksElement.appendChild(videoSection);
       });
-
       updateTotalStorageUsage();
     });
   };
