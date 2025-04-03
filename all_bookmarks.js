@@ -1,113 +1,148 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const allBookmarksElement = document.getElementById("all-bookmarks");
+  const deleteAllButton = document.getElementById("delete-all");
 
-  chrome.storage.sync.get(null, async (data) => {
-    allBookmarksElement.innerHTML = ""; // Clear previous list
+  // Function to format timestamp
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString(); // Converts to readable format
+  };
 
-    if (Object.keys(data).length === 0) {
-      allBookmarksElement.innerHTML = "<i>No bookmarks saved yet.</i>";
-      return;
-    }
+  // Function to render all bookmarks
+  const renderBookmarks = () => {
+    chrome.storage.sync.get(null, (data) => {
+      allBookmarksElement.innerHTML = ""; // Clear previous list
 
-    for (const videoId of Object.keys(data)) {
-      const videoBookmarks = JSON.parse(data[videoId]);
-      if (videoBookmarks.length === 0) continue;
+      // Check if storage is empty
+      const videoIds = Object.keys(data).filter((id) => !id.endsWith("_title"));
+      if (videoIds.length === 0) {
+        allBookmarksElement.innerHTML = "<i>No bookmarks saved yet.</i>";
+        deleteAllButton.style.display = "none"; // Hide delete button
+        return;
+      }
 
-      // Fetch the video title
-      const videoTitle = await getVideoTitle(videoId);
+      deleteAllButton.style.display = "block"; // Show delete button
 
-      // Create video section
-      const videoSection = document.createElement("div");
-      videoSection.className = "video-bookmark-section";
+      videoIds.forEach((videoId) => {
+        let videoBookmarks = JSON.parse(data[videoId]);
+        if (videoBookmarks.length === 0) return; // Skip empty entries
 
-      const videoTitleElement = document.createElement("h3");
-      videoTitleElement.innerHTML = `🎥 <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">${videoTitle}</a>`;
-      videoSection.appendChild(videoTitleElement);
+        // Sort bookmarks by timestamp (latest first)
+        videoBookmarks.sort((a, b) => b.timestamp - a.timestamp);
 
-      const bookmarkList = document.createElement("ul");
-      videoBookmarks.forEach((bookmark) => {
-        const bookmarkItem = document.createElement("li");
-        bookmarkItem.className = "bookmark-item"; // Added class for styling
+        // Fetch stored video title
+        const videoTitle = data[`${videoId}_title`] || "Unknown Video";
 
-        // Description
-        const bookmarkText = document.createElement("span");
-        bookmarkText.innerHTML = `<strong>${bookmark.desc}</strong> - ${bookmark.shortDesc}`;
+        // Create video section
+        const videoSection = document.createElement("div");
+        videoSection.className = "video-bookmark-section";
 
-        // Flex container for buttons
-        const buttonContainer = document.createElement("div");
-        buttonContainer.className = "button-container"; // Flex container
+        const videoTitleElement = document.createElement("h3");
+        videoTitleElement.innerHTML = `🎥 <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">${videoTitle}</a>`;
+        videoSection.appendChild(videoTitleElement);
 
-        // Play Button
-        const playButton = document.createElement("a");
-        playButton.href = `https://www.youtube.com/watch?v=${videoId}&t=${bookmark.time}s`;
-        playButton.target = "_blank";
-        playButton.textContent = "▶";
-        playButton.className = "play-button";
+        const bookmarkList = document.createElement("ul");
+        videoBookmarks.forEach((bookmark) => {
+          const bookmarkItem = document.createElement("li");
+          bookmarkItem.className = "bookmark-item";
 
-        // Delete Button
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "⚔️";
-        deleteButton.className = "delete-button";
-        deleteButton.addEventListener("click", () => {
-          deleteBookmark(videoId, bookmark.time, bookmarkItem, videoSection);
+          // Description
+          const bookmarkText = document.createElement("span");
+          bookmarkText.innerHTML = `<strong>${bookmark.desc}</strong> - ${bookmark.shortDesc} <br> <small>🕒 Added at: ${bookmark.addedAt}</small>`;
+
+          // Flex container for buttons
+          const buttonContainer = document.createElement("div");
+          buttonContainer.className = "button-container";
+
+          // Play Button
+          const playButton = document.createElement("a");
+          playButton.href = `https://www.youtube.com/watch?v=${videoId}&t=${bookmark.time}s`;
+          playButton.target = "_blank";
+          playButton.textContent = "▶";
+          playButton.className = "play-button";
+
+          // Delete Button
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "⚔️";
+          deleteButton.className = "delete-button";
+          deleteButton.addEventListener("click", () => {
+            deleteBookmark(videoId, bookmark.time, bookmarkItem, videoSection);
+          });
+
+          // Append buttons to container
+          buttonContainer.appendChild(playButton);
+          buttonContainer.appendChild(deleteButton);
+
+          // Append elements to list item
+          bookmarkItem.appendChild(bookmarkText);
+          bookmarkItem.appendChild(buttonContainer);
+          bookmarkList.appendChild(bookmarkItem);
         });
 
-        // Append buttons to container
-        buttonContainer.appendChild(playButton);
-        buttonContainer.appendChild(deleteButton);
-
-        // Append elements to list item
-        bookmarkItem.appendChild(bookmarkText);
-        bookmarkItem.appendChild(buttonContainer);
-        bookmarkList.appendChild(bookmarkItem);
+        videoSection.appendChild(bookmarkList);
+        allBookmarksElement.appendChild(videoSection);
       });
+    });
+  };
 
-      videoSection.appendChild(bookmarkList);
-      allBookmarksElement.appendChild(videoSection);
-    }
-  });
-});
+  // Function to delete a single bookmark
+  const deleteBookmark = (videoId, time, bookmarkElement, videoSection) => {
+    chrome.storage.sync.get([videoId], (data) => {
+      let bookmarks = data[videoId] ? JSON.parse(data[videoId]) : [];
 
-// Function to get YouTube video title
-const getVideoTitle = async (videoId) => {
-  const YOUTUBE_API_KEY = "YOUR_YOUTUBE_API_KEY"; // Replace with your API key
+      // Remove the specific bookmark
+      bookmarks = bookmarks.filter((b) => b.time !== time);
 
-  try {
-    const response = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${YOUTUBE_API_KEY}&part=snippet`
-    );
-    const data = await response.json();
-
-    if (data.items.length > 0) {
-      return data.items[0].snippet.title; // Extract and return the video title
-    } else {
-      return "Unknown Video";
-    }
-  } catch (error) {
-    console.error("Error fetching video title:", error);
-    return "Unknown Video";
-  }
-};
-
-// Function to delete a bookmark
-const deleteBookmark = (videoId, time, bookmarkElement, videoSection) => {
-  chrome.storage.sync.get([videoId], (data) => {
-    let bookmarks = data[videoId] ? JSON.parse(data[videoId]) : [];
-
-    // Filter out the bookmark to delete
-    bookmarks = bookmarks.filter((b) => b.time !== time);
-
-    // Update Chrome storage
-    chrome.storage.sync.set({ [videoId]: JSON.stringify(bookmarks) }, () => {
-      console.log("Bookmark deleted!");
-
-      // Remove bookmark from UI
-      bookmarkElement.remove();
-
-      // If no bookmarks left, remove the entire section
-      if (bookmarks.length === 0) {
-        videoSection.remove();
+      // Update Chrome storage
+      if (bookmarks.length > 0) {
+        chrome.storage.sync.set(
+          { [videoId]: JSON.stringify(bookmarks) },
+          () => {
+            console.log("Bookmark deleted!");
+            bookmarkElement.remove();
+          }
+        );
+      } else {
+        // If no bookmarks left for this video, remove the entry
+        chrome.storage.sync.remove(videoId, () => {
+          console.log("No bookmarks left for this video. Removing...");
+          videoSection.remove();
+        });
       }
     });
+  };
+
+  // Function to delete ALL bookmarks
+  deleteAllButton.addEventListener("click", () => {
+    if (
+      confirm(
+        "Are you sure you want to delete all bookmarks? This action cannot be undone."
+      )
+    ) {
+      chrome.storage.sync.clear(() => {
+        alert("All bookmarks deleted successfully!");
+        allBookmarksElement.innerHTML = "<i>No bookmarks saved yet.</i>";
+        deleteAllButton.style.display = "none"; // Hide delete button after deletion
+      });
+    }
   });
-};
+
+  // Function to remove empty bookmark entries
+  const cleanUpEmptyBookmarks = () => {
+    chrome.storage.sync.get(null, (data) => {
+      const videoIds = Object.keys(data).filter((id) => !id.endsWith("_title"));
+
+      videoIds.forEach((videoId) => {
+        const bookmarks = JSON.parse(data[videoId] || "[]");
+        if (bookmarks.length === 0) {
+          chrome.storage.sync.remove(videoId, () => {
+            console.log(`Removed empty bookmark entry: ${videoId}`);
+          });
+        }
+      });
+    });
+  };
+
+  cleanUpEmptyBookmarks();
+  renderBookmarks();
+});
