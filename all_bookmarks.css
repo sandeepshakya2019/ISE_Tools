@@ -16,14 +16,23 @@ body {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Hover Effect on Container */
+.container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(255, 255, 255, 0.15);
 }
 
 /* Title */
 .title {
-  font-size: 24px;
+  font-size: 32px; /* Increased size */
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   color: #bb86fc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Video Bookmark Section */
@@ -34,12 +43,21 @@ body {
   padding: 15px;
   margin-bottom: 20px;
   box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
+/* Hover Effect on Video Sections */
+.video-bookmark-section:hover {
+  transform: scale(1.03);
+  box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Headings for Video Sections */
 .video-bookmark-section h3 {
-  font-size: 18px;
+  font-size: 22px; /* Increased size */
   color: #03dac6;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  font-weight: bold;
 }
 
 /* Bookmark List */
@@ -57,6 +75,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+}
+
+/* Hover Effect on Bookmark List */
+.video-bookmark-section li:hover {
+  background: #333;
+  transform: translateX(5px);
 }
 
 /* Bookmark Description */
@@ -70,9 +95,9 @@ body {
   text-decoration: none;
   background: #bb86fc;
   color: white;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 15px;
   transition: 0.3s;
 }
 
@@ -98,98 +123,45 @@ body {
   background: #9b59ff;
 }
 
+/* Delete Button */
 .delete-button {
   background-color: #faaeae;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 6px 12px;
   margin-left: 10px;
   border-radius: 5px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
+/* Hover Effect on Delete Button */
 .delete-button:hover {
   background-color: #cc0000;
+  transform: scale(1.1);
 }
 
-.video-bookmark-section {
-  background-color: #1e1e1e;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-h3 a {
-  color: #ffcc00;
-  text-decoration: none;
-}
-
-h3 a:hover {
-  text-decoration: underline;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.bookmark-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #2c2c2c;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-
-.bookmark-item span {
-  flex: 1;
-  word-wrap: break-word;
-  color: white;
-}
-
-.button-container {
-  display: flex;
-  gap: 10px;
-}
-
-.play-button,
-.delete-button {
-  padding: 5px 12px;
-  border-radius: 5px;
-  text-align: center;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
+/* Play Button */
 .play-button {
   background-color: #4caf50;
   color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
   text-decoration: none;
+  transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .play-button:hover {
   background-color: #388e3c;
-}
-
-.delete-button {
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-}
-
-.delete-button:hover {
-  background-color: #cc0000;
+  transform: scale(1.1);
 }
 
 /* Storage Usage Container */
 .storage-container {
   margin-top: 15px;
-  font-size: 14px;
+  font-size: 15px;
   color: #d1e0e0;
   text-align: center;
 }
@@ -212,12 +184,20 @@ ul {
   transition: width 0.5s ease-in-out;
 }
 
+/* Storage Info Box */
 .storage-info {
-  background-color: #222; /* Dark background */
-  color: #fff; /* Light text */
-  padding: 12px;
+  background-color: #222;
+  color: #fff;
+  padding: 14px;
   border-radius: 8px;
-  border: 1px solid #444; /* Slight border for contrast */
-  font-size: 14px;
+  border: 1px solid #444;
+  font-size: 15px;
   margin: 10px 0;
+  transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+}
+
+/* Hover Effect on Storage Info */
+.storage-info:hover {
+  background: #333;
+  transform: scale(1.05);
 }
