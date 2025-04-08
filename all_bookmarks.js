@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
       deleteAllButton.style.display = "block";
+
       videoIds.forEach((videoId) => {
         let videoBookmarks = JSON.parse(data[videoId]);
         if (videoBookmarks.length === 0) return;
@@ -63,7 +64,30 @@ document.addEventListener("DOMContentLoaded", async () => {
           )}`;
           window.open(whatsappUrl, "_blank");
         });
-        videoSection.appendChild(shareButton);
+
+        const copyButton = document.createElement("button");
+        copyButton.textContent = "📋";
+        copyButton.className = "copy-button";
+        copyButton.addEventListener("click", () => {
+          let copyText = `📌 *Bookmarks for ${videoTitle}:*\n\n`;
+          videoBookmarks.forEach((bookmark, index) => {
+            const url = `https://www.youtube.com/watch?v=${videoId}&t=${bookmark.time}s`;
+            copyText += `${index + 1}. *${bookmark.shortDesc}*\n🔗 ${url}\n\n`;
+          });
+          navigator.clipboard.writeText(copyText).then(() => {
+            copyButton.textContent = "✅";
+            setTimeout(() => (copyButton.textContent = "📋"), 1500);
+          });
+        });
+
+        // ✅ New flex container for title + share + copy
+        const videoHeader = document.createElement("div");
+        videoHeader.className = "video-header";
+        videoHeader.appendChild(videoTitleElement);
+        videoHeader.appendChild(shareButton);
+        videoHeader.appendChild(copyButton);
+        videoSection.appendChild(videoHeader);
+
         const bookmarkList = document.createElement("ul");
         videoBookmarks.forEach((bookmark, index) => {
           const bookmarkItem = document.createElement("li");
