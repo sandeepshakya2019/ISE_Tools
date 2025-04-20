@@ -27,7 +27,7 @@ A lightweight and efficient Chrome extension designed to help users **bookmark s
 
 ---
 
-### 2) Game Play Video (Click to Open)
+### 2) Game Play Video (Click on Images to view videos)
 
 #### 🔹 Video 1
 
