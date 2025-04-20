@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         videoTitleElement.innerHTML = `🎥 <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">${videoTitle}</a>`;
         videoSection.appendChild(videoTitleElement);
         const shareButton = document.createElement("button");
-        shareButton.textContent = "📤";
+        shareButton.textContent = "➥";
         shareButton.className = "share-button";
         shareButton.addEventListener("click", () => {
           let shareText = `📌 *Bookmarks for ${videoTitle}:*\n\n`;
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         const copyButton = document.createElement("button");
-        copyButton.textContent = "📋";
+        copyButton.textContent = "🗐";
         copyButton.className = "copy-button";
         copyButton.addEventListener("click", () => {
           let copyText = `📌 *Bookmarks for ${videoTitle}:*\n\n`;
@@ -75,8 +75,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             copyText += `${index + 1}. *${bookmark.shortDesc}*\n🔗 ${url}\n\n`;
           });
           navigator.clipboard.writeText(copyText).then(() => {
-            copyButton.textContent = "✅";
-            setTimeout(() => (copyButton.textContent = "📋"), 1500);
+            copyButton.textContent = "✔";
+            setTimeout(() => (copyButton.textContent = "🗐"), 1500);
           });
         });
 
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           playButton.textContent = "▶";
           playButton.className = "play-button";
           const deleteButton = document.createElement("button");
-          deleteButton.textContent = "⚔️";
+          deleteButton.textContent = "✖ ";
           deleteButton.className = "delete-button";
           deleteButton.addEventListener("click", () => {
             deleteBookmark(videoId, bookmark.time, bookmarkItem, videoSection);
