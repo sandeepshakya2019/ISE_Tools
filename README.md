@@ -29,8 +29,20 @@ A lightweight and efficient Chrome extension designed to help users **bookmark s
 
 ### 2) Game Play Video
 
-![Screenshot 1](./assets/screenshot1.png)  
-_Example of the Bookmark Manager in action._
+## Demo Videos
+
+### 🔹 Video 1
+
+[![Video 1](https://via.placeholder.com/800x450.png?text=Click+to+Play+Video+1)](https://drive.google.com/file/d/1ychw43g3uvhdY5oCM9La0mhBhXs179qQ/view?usp=sharing)
+
+### 🔹 Video 2
+
+[![Video 2](https://via.placeholder.com/800x450.png?text=Click+to+Play+Video+2)](https://drive.google.com/file/d/1SiU0a5KZkct0uFMe97y990cI5OGWQK4i/view?usp=sharing)
+
+### 🔹 Video 3
+
+[![Video 3](https://via.placeholder.com/800x450.png?text=Click+to+Play+Video+3)](https://drive.google.com/file/d/1Wom6k60ddjKcuTSK932HEsICyM6qab4D/view?usp=sharing)
+
 
 ---
 
@@ -40,13 +52,13 @@ _Example of the Bookmark Manager in action._
   Save any moment of a YouTube video with a custom title, label, and timestamp for quick access.
 
 - **Smart Search**  
-  Quickly find bookmarks using a real-time search bar. Search by video title, label, or custom tags to locate key moments in videos.
+  Quickly find bookmarks using a real-time search bar. Search by video title, label, or custom tags to locate key video moments.
 
 - **Video-wise Organization**  
   Bookmarks are stored and grouped per video, making it easy to find all saved moments from a specific video.
 
 - **Sorting Options**  
-  Sort your bookmarks by title, label, or the date created to easily manage and access them.
+  Sort your bookmarks by title, label, or the date created to manage and access them easily.
 
 - **Edit & Delete**  
   Easily update bookmark titles or remove unwanted bookmarks with just a click.
