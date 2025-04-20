@@ -27,41 +27,17 @@ A lightweight and efficient Chrome extension designed to help users **bookmark s
 
 ---
 
-### 2) Game Play Video
+### 2) Game Play Video (Click to Open)
 
-## Demo Videos
-
-### 🔹 Video 1
-![image](https://github.com/user-attachments/assets/7cc68d1a-0107-42ef-b631-a610be8495aa)
-
-
-![image](https://github.com/user-attachments/assets/b9cf0283-25f3-4911-9325-b854060d693d)
-
-![image](https://github.com/user-attachments/assets/c5c85e47-afab-46cc-ab8a-a7ebcdd38839)
-
-
-
-[![Video 1](https://via.placeholder.com/800x450.png?text=Click+to+Play+Video+1)](https://drive.google.com/file/d/1ychw43g3uvhdY5oCM9La0mhBhXs179qQ/view?usp=sharing)
-
-### 🔹 Video 2
-
-[![Video 2](https://via.placeholder.com/800x450.png?text=Click+to+Play+Video+2)](https://drive.google.com/file/d/1SiU0a5KZkct0uFMe97y990cI5OGWQK4i/view?usp=sharing)
-
-### 🔹 Video 3
-
-[![Video 3](https://via.placeholder.com/800x450.png?text=Click+to+Play+Video+3)](https://drive.google.com/file/d/1Wom6k60ddjKcuTSK932HEsICyM6qab4D/view?usp=sharing)
-
-## 🎬 Demo Videos
-
-### 🔹 Video 1
+#### 🔹 Video 1
 
 [![Video 1](https://github.com/user-attachments/assets/7cc68d1a-0107-42ef-b631-a610be8495aa)](https://drive.google.com/file/d/1ychw43g3uvhdY5oCM9La0mhBhXs179qQ/view?usp=sharing)
 
-### 🔹 Video 2
+#### 🔹 Video 2
 
 [![Video 2](https://github.com/user-attachments/assets/b9cf0283-25f3-4911-9325-b854060d693d)](https://drive.google.com/file/d/1SiU0a5KZkct0uFMe97y990cI5OGWQK4i/view?usp=sharing)
 
-### 🔹 Video 3
+#### 🔹 Video 3
 
 [![Video 3](https://github.com/user-attachments/assets/c5c85e47-afab-46cc-ab8a-a7ebcdd38839)](https://drive.google.com/file/d/1Wom6k60ddjKcuTSK932HEsICyM6qab4D/view?usp=sharing)
 
