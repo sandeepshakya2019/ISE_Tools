@@ -162,6 +162,30 @@ document.addEventListener("DOMContentLoaded", async () => {
           bookmarkItem.appendChild(bookmarkText);
           bookmarkItem.appendChild(buttonContainer);
           bookmarkList.appendChild(bookmarkItem);
+
+          bookmarkItem.addEventListener("mouseenter", () => {
+            const startTime =
+              typeof bookmark.time === "number" && bookmark.time >= 0
+                ? Math.floor(bookmark.time)
+                : 0;
+
+            const videoPreview = document.createElement("iframe");
+            videoPreview.src = `https://www.youtube.com/embed/${videoId}?start=${startTime}&autoplay=1&mute=1`; // optional mute=1
+            videoPreview.width = "320";
+            videoPreview.height = "180";
+            videoPreview.style.position = "absolute";
+            videoPreview.style.top = "0";
+            videoPreview.style.left = "100%";
+            videoPreview.style.zIndex = "1000";
+            videoPreview.style.border = "none";
+            videoPreview.style.borderRadius = "8px";
+
+            bookmarkItem.appendChild(videoPreview);
+
+            bookmarkItem.addEventListener("mouseleave", () => {
+              videoPreview.remove();
+            });
+          });
         });
 
         videoSection.appendChild(bookmarkList);
