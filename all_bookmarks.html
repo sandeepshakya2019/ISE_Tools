@@ -46,6 +46,27 @@
         </div>
       </div>
       <br />
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+        "
+      >
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search bookmarks..."
+          style="width: 60%; padding: 5px"
+        />
+        <select id="sort-options" style="padding: 5px">
+          <option value="date">Sort by Date</option>
+          <option value="title">Sort by Title</option>
+        </select>
+      </div>
+      <br />
+
       <div id="all-bookmarks">Loading bookmarks...</div>
     </div>
     <script src="all_bookmarks.js"></script>

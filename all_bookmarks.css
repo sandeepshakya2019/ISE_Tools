@@ -62,7 +62,8 @@ body {
 }
 
 .delete-button,
-.play-button {
+.play-button,
+.edit-button {
   color: white;
   text-decoration: none;
   border: none;
@@ -71,6 +72,10 @@ body {
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.edit-button {
+  background-color: #007bff;
 }
 
 .delete-button {
@@ -307,4 +312,38 @@ body {
 .video-bookmark-section li strong {
   font-size: 16px;
   color: #e0e0e0;
+}
+
+.video-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+}
+
+#search-input {
+  width: 100%;
+  padding: 6px 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+  font-size: 14px;
+}
+
+#sort-options {
+  margin-left: 5px;
+  padding: 6px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #1e1e1e;
+  color: #f1f1f1;
 }
