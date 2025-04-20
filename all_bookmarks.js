@@ -38,6 +38,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
       }
 
+      const pinnedVideos = JSON.parse(
+        localStorage.getItem("pinnedVideos") || "{}"
+      );
+
+      videoIds = videoIds.filter((id) => data[id]); // ensure valid keys
+
+      // Sort based on pinning first, then title/date
+      videoIds.sort((a, b) => {
+        const aPinned = pinnedVideos[a] ? 1 : 0;
+        const bPinned = pinnedVideos[b] ? 1 : 0;
+
+        if (aPinned !== bPinned) return bPinned - aPinned; // Pinned first
+
+        if (sortBy === "title") {
+          const titleA = (data[`${a}_title`] || "").toLowerCase();
+          const titleB = (data[`${b}_title`] || "").toLowerCase();
+          return titleA.localeCompare(titleB);
+        }
+
+        // Default fallback sort by latest bookmark timestamp (desc)
+        const lastA = Math.max(
+          ...(JSON.parse(data[a] || "[]").map((b) => b.timestamp) || [0])
+        );
+        const lastB = Math.max(
+          ...(JSON.parse(data[b] || "[]").map((b) => b.timestamp) || [0])
+        );
+        return lastB - lastA;
+      });
+
       if (videoIds.length === 0) {
         allBookmarksElement.innerHTML = "<i>No bookmarks saved yet.</i>";
         deleteAllButton.style.display = "none";
@@ -50,29 +79,48 @@ document.addEventListener("DOMContentLoaded", async () => {
         let videoBookmarks = JSON.parse(data[videoId] || "[]");
         if (!videoBookmarks.length) return;
 
-        videoBookmarks.sort((a, b) => b.timestamp - a.timestamp);
+        // Sorting: pinned on top
+        videoBookmarks.sort((a, b) => {
+          const aPinned = pinnedVideos[a.videoId];
+          const bPinned = pinnedVideos[b.videoId];
+          if (aPinned && !bPinned) return -1;
+          if (!aPinned && bPinned) return 1;
+          return b.timestamp - a.timestamp;
+        });
 
+        // Filtering
         const filteredBookmarks = videoBookmarks.filter((b) =>
           b.shortDesc.toLowerCase().includes(searchQuery)
         );
-
         if (filteredBookmarks.length === 0) return;
 
         const videoTitle = data[`${videoId}_title`] || "Unknown Video";
         const videoSection = document.createElement("div");
         videoSection.className = "video-bookmark-section";
 
+        const videoHeader = document.createElement("div");
+        videoHeader.className = "video-header";
+
         const videoTitleElement = document.createElement("h3");
         videoTitleElement.innerHTML = `🎥 <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">${videoTitle}</a>`;
+
+        const pinBtn = document.createElement("button");
+        pinBtn.className = "video-pin-btn";
+        pinBtn.textContent = pinnedVideos[videoId] ? "🚩" : "📌";
+        pinBtn.addEventListener("click", () => {
+          pinnedVideos[videoId] = !pinnedVideos[videoId];
+          localStorage.setItem("pinnedVideos", JSON.stringify(pinnedVideos));
+          renderBookmarks();
+        });
 
         const shareButton = document.createElement("button");
         shareButton.textContent = "➥";
         shareButton.className = "share-button";
         shareButton.addEventListener("click", () => {
           let shareText = `📌 *Bookmarks for ${videoTitle}:*\n\n`;
-          videoBookmarks.forEach((bookmark, i) => {
-            const url = `https://www.youtube.com/watch?v=${videoId}&t=${bookmark.time}s`;
-            shareText += `${i + 1}. *${bookmark.shortDesc}*\n🔗 ${url}\n\n`;
+          videoBookmarks.forEach((b, i) => {
+            const url = `https://www.youtube.com/watch?v=${videoId}&t=${b.time}s`;
+            shareText += `${i + 1}. *${b.shortDesc}*\n🔗 ${url}\n\n`;
           });
           const whatsappUrl = `https://web.whatsapp.com/send?text=${encodeURIComponent(
             shareText
@@ -85,9 +133,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         copyButton.className = "copy-button";
         copyButton.addEventListener("click", () => {
           let copyText = `📌 *Bookmarks for ${videoTitle}:*\n\n`;
-          videoBookmarks.forEach((bookmark, i) => {
-            const url = `https://www.youtube.com/watch?v=${videoId}&t=${bookmark.time}s`;
-            copyText += `${i + 1}. *${bookmark.shortDesc}*\n🔗 ${url}\n\n`;
+          videoBookmarks.forEach((b, i) => {
+            const url = `https://www.youtube.com/watch?v=${videoId}&t=${b.time}s`;
+            copyText += `${i + 1}. *${b.shortDesc}*\n🔗 ${url}\n\n`;
           });
           navigator.clipboard.writeText(copyText).then(() => {
             copyButton.textContent = "✔";
@@ -95,11 +143,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           });
         });
 
-        const videoHeader = document.createElement("div");
-        videoHeader.className = "video-header";
-        videoHeader.appendChild(videoTitleElement);
-        videoHeader.appendChild(shareButton);
-        videoHeader.appendChild(copyButton);
+        videoHeader.append(videoTitleElement, pinBtn, shareButton, copyButton);
         videoSection.appendChild(videoHeader);
 
         const bookmarkList = document.createElement("ul");
@@ -113,7 +157,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           const bookmarkText = document.createElement("span");
           bookmarkText.innerHTML = `<strong>${i + 1}. ${
             bookmark.desc
-          }</strong> - ${bookmark.shortDesc}<br><small>🕒 Added at: ${
+          }</strong> - ${bookmark.shortDesc}<br><small>🕒 ${
             bookmark.addedAt
           }</small>`;
 
@@ -130,14 +174,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           editButton.textContent = "✎";
           editButton.className = "edit-button";
           editButton.addEventListener("click", () => {
-            const newShortDesc = prompt(
+            const newDesc = prompt(
               "Edit short description:",
               bookmark.shortDesc
             );
-            if (newShortDesc !== null) {
-              bookmark.shortDesc = newShortDesc;
+            if (newDesc !== null) {
+              bookmark.shortDesc = newDesc;
               chrome.storage.sync.get([videoId], (data) => {
-                let bookmarks = JSON.parse(data[videoId]);
+                const bookmarks = JSON.parse(data[videoId]);
                 const idx = bookmarks.findIndex(
                   (b) => b.time === bookmark.time
                 );
@@ -159,11 +203,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             deleteBookmark(videoId, bookmark.time, bookmarkItem, videoSection)
           );
 
-          buttonContainer.appendChild(playButton);
-          buttonContainer.appendChild(editButton);
-          buttonContainer.appendChild(deleteButton);
-          bookmarkItem.appendChild(bookmarkText);
-          bookmarkItem.appendChild(buttonContainer);
+          buttonContainer.append(playButton, editButton, deleteButton);
+          bookmarkItem.append(bookmarkText, buttonContainer);
           bookmarkList.appendChild(bookmarkItem);
 
           bookmarkItem.addEventListener("mouseenter", () => {
@@ -207,6 +248,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           bookmarkItem.addEventListener("drop", (e) => {
             e.preventDefault();
+            bookmarkItem.style.borderTop = "";
             const draggedTime = parseFloat(
               e.dataTransfer.getData("text/plain")
             );
@@ -229,6 +271,28 @@ document.addEventListener("DOMContentLoaded", async () => {
                 );
               }
             });
+          });
+
+          // Video preview
+          bookmarkItem.addEventListener("mouseenter", () => {
+            const startTime = Math.floor(bookmark.time || 0);
+            const preview = document.createElement("iframe");
+            preview.src = `https://www.youtube.com/embed/${videoId}?start=${startTime}&autoplay=1&mute=1`;
+            preview.width = "320";
+            preview.height = "180";
+            preview.style.position = "absolute";
+            preview.style.top = "0";
+            preview.style.left = "100%";
+            preview.style.zIndex = "1000";
+            preview.style.border = "none";
+            preview.style.borderRadius = "8px";
+            bookmarkItem.appendChild(preview);
+
+            bookmarkItem.addEventListener(
+              "mouseleave",
+              () => preview.remove(),
+              { once: true }
+            );
           });
         });
 
