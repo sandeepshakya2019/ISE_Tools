@@ -52,10 +52,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         videoBookmarks.sort((a, b) => b.timestamp - a.timestamp);
 
-        const filteredBookmarks = videoBookmarks.filter(
-          (b) =>
-            b.desc.toLowerCase().includes(searchQuery) ||
-            b.shortDesc.toLowerCase().includes(searchQuery)
+        const filteredBookmarks = videoBookmarks.filter((b) =>
+          b.shortDesc.toLowerCase().includes(searchQuery)
         );
 
         if (filteredBookmarks.length === 0) return;
@@ -129,13 +127,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           editButton.textContent = "✎";
           editButton.className = "edit-button";
           editButton.addEventListener("click", () => {
-            const newDesc = prompt("Edit description:", bookmark.desc);
             const newShortDesc = prompt(
               "Edit short description:",
               bookmark.shortDesc
             );
-            if (newDesc !== null && newShortDesc !== null) {
-              bookmark.desc = newDesc;
+            if (newShortDesc !== null) {
               bookmark.shortDesc = newShortDesc;
               chrome.storage.sync.get([videoId], (data) => {
                 let bookmarks = JSON.parse(data[videoId]);
