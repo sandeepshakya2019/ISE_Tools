@@ -103,9 +103,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         videoSection.appendChild(videoHeader);
 
         const bookmarkList = document.createElement("ul");
+
         filteredBookmarks.forEach((bookmark, i) => {
           const bookmarkItem = document.createElement("li");
           bookmarkItem.className = "bookmark-item";
+          bookmarkItem.setAttribute("draggable", true);
+          bookmarkItem.dataset.time = bookmark.time;
 
           const bookmarkText = document.createElement("span");
           bookmarkText.innerHTML = `<strong>${i + 1}. ${
@@ -170,7 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 : 0;
 
             const videoPreview = document.createElement("iframe");
-            videoPreview.src = `https://www.youtube.com/embed/${videoId}?start=${startTime}&autoplay=1&mute=1`; // optional mute=1
+            videoPreview.src = `https://www.youtube.com/embed/${videoId}?start=${startTime}&autoplay=1&mute=1`;
             videoPreview.width = "320";
             videoPreview.height = "180";
             videoPreview.style.position = "absolute";
@@ -181,9 +184,50 @@ document.addEventListener("DOMContentLoaded", async () => {
             videoPreview.style.borderRadius = "8px";
 
             bookmarkItem.appendChild(videoPreview);
-
             bookmarkItem.addEventListener("mouseleave", () => {
               videoPreview.remove();
+            });
+          });
+
+          // 🟨 Drag & Drop logic
+          bookmarkItem.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", bookmark.time);
+            e.dropEffect = "move";
+          });
+
+          bookmarkItem.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            bookmarkItem.style.borderTop = "2px dashed #007bff";
+          });
+
+          bookmarkItem.addEventListener("dragleave", () => {
+            bookmarkItem.style.borderTop = "";
+          });
+
+          bookmarkItem.addEventListener("drop", (e) => {
+            e.preventDefault();
+            const draggedTime = parseFloat(
+              e.dataTransfer.getData("text/plain")
+            );
+            if (draggedTime === bookmark.time) return;
+
+            chrome.storage.sync.get([videoId], (data) => {
+              const bookmarks = JSON.parse(data[videoId]);
+              const fromIndex = bookmarks.findIndex(
+                (b) => b.time === draggedTime
+              );
+              const toIndex = bookmarks.findIndex(
+                (b) => b.time === bookmark.time
+              );
+              if (fromIndex !== -1 && toIndex !== -1) {
+                const [moved] = bookmarks.splice(fromIndex, 1);
+                bookmarks.splice(toIndex, 0, moved);
+                chrome.storage.sync.set(
+                  { [videoId]: JSON.stringify(bookmarks) },
+                  renderBookmarks
+                );
+              }
             });
           });
         });

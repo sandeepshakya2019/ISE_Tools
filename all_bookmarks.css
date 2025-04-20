@@ -347,3 +347,11 @@ body {
   background: #1e1e1e;
   color: #f1f1f1;
 }
+
+.bookmark-item.dragging {
+  opacity: 0.5;
+}
+
+.bookmark-item.drag-over {
+  border: 2px dashed #2196f3;
+}
