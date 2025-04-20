@@ -264,7 +264,7 @@ body {
 
 .bookmark-item {
   padding: 0.5rem 0;
-  border-bottom: 1px dashed #ccc;
+  /* border-bottom: 1px dashed #ccc; */
 }
 
 .bookmark-item:last-child {
@@ -276,7 +276,7 @@ body {
   padding: 1rem;
   margin-bottom: 1rem;
   background: #252525;
-  border: 1px solid #333;
+  border: 2px solid #454545;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
